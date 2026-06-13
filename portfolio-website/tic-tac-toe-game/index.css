@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{margin: 0;
+padding: 0;}
+
+
+.navbar{height: 70px;
+background-color: rgb(1, 12, 43);
+display: flex;
+align-items: center;
+padding-left: 10px;
+color: white;
+list-style: none;
+font-size: 25px;
+ font-family: "Saira", sans-serif;}
+
+ .logo{background-image: url("images.png");
+background-size: cover;
+height: 60px;
+width: 100px;
+background-position: center;}
+li{padding-left: 5px;}
+.rightitems{
+display: flex;
+font-size: 15px;
+justify-content: flex-end;
+padding-left:70% ;}
+
+.home{padding-right: 10px;
+ width: 40px;
+    padding: 15px;
+    text-align: center;
+    /* Initial styles */
+    border: 2px solid transparent; /* Set a transparent border initially */
+    transition: border-color 0.3s ease;}
+
+.about{padding-left: 10px;
+width: 40px;
+    padding: 15px;
+    text-align: center;
+    /* Initial styles */
+    border: 2px solid transparent; /* Set a transparent border initially */
+    transition: border-color 0.3s ease;}
+
+.home:hover{border-color: white;}
+
+.about:hover{border-color: white;}
+
+.gamecontainer{
+    margin-top: 10px;
+display: flex;
+justify-content: center;}
+.container{
+    display: grid;
+    grid-template-rows: repeat(3 , 10vw);
+    grid-template-columns: repeat(3 , 10vw);
+}
+
+.box{
+    border-radius: 1.5vmin;
+    font-size: 8vw;
+    display: flex;
+    justify-content: center;
+    cursor: pointer ;
+    align-items: center;
+}
+
+.box:hover{
+    background-color: rgb(199, 151, 245);
+}
+
+.gameInfo{
+    padding: 0 34px;
+}
+
+.bt-0{
+    border-top:0px;
+}
+
+.bl-0{border-left:0px;}
+
+.br-0{border-right: 0px;}
+
+.bb-0{border-bottom: 0px;}
+
+#reset {
+  padding: 15px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2952d8, #7a43bd);
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 2px,2px,2px;
+  font-size: 1.25rem;
+}
+#reset:hover{transform: translateY(-3px); /* Lifts the button up */
+  box-shadow: 0 6px 20px rgba(110, 142, 251, 0.4);
+}
+#reset:active{transform: translateY(-1px);}
+
+.line{
+    background-color: black;
+    height: 3px;
+    width: 0;
+    position: absolute;
+    background-color: #c945c9;
+    transition: width 1s ease-in-out;
+}
+
+@media screen and (max-width: 950px)
+{
+    .gameContainer{
+        flex-wrap: wrap;
+    }
+    .gameInfo{
+        margin-top: 34px;
+    }
+    .gameInfo h1{
+        font-size: 1.5rem;
+    }
+    .container { 
+        grid-template-rows: repeat(3, 20vw);
+        grid-template-columns: repeat(3, 20vw);
+    }
+}
+
+.imgbox img{width: 0px;
+    transition: 1s ease-in-out;
+    
+}
+.Info{font-size: 25px;
+   padding:15px;
+margin-bottom: 15px;}
+
+.gamecontainer{background-color: #84a1ff;}
+
+/* Update your existing .container and .line classes with these specific properties */
+
+.container {
+    display: grid;
+    grid-template-rows: repeat(3 , 10vw);
+    grid-template-columns: repeat(3 , 10vw);
+    position: relative; /* CRITICAL: Allows the line to position itself relative to the grid */
+}
+
+.box {
+    border: 2px solid black; /* Ensure boxes have visible borders */
+    font-size: 8vw;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    align-items: center;
+    background-color: transparent;
+    
+}
+
+.line {
+    background-color: #c945c9;
+    height: 3px;
+    width: 0;
+    position: absolute;
+    transition: width 1s ease-in-out;
+    z-index: 10; /* Ensures line appears above the letters */
+}
+
+/* Fix for the media query at 950px */
+@media screen and (max-width: 950px) {
+    .container { 
+        grid-template-rows: repeat(3, 20vw);
+        grid-template-columns: repeat(3, 20vw);
+    }
+    .line {
+        /* Adjust line length for mobile sizing */
+        display: none; /* Often easier to hide the line on mobile if coordinates don't scale perfectly */
+    }
+}
+.gamecontainer {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                url('background.jpg'); 
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(8px); /* Creates the photography bokeh effect */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.box {
+    /* ... your existing styles ... */
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    backdrop-filter: blur(10px);          /* This creates the blur effect */
+    -webkit-backdrop-filter: blur(10px);   /* Support for Safari */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for glass look */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
+}
+
+.box:hover {
+    background: rgba(255, 255, 255, 0.2); /* Brightens slightly on hover */
+}

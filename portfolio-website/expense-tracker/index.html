@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0a0d1d;
+      --panel: rgba(49, 32, 32, 0.06);
+      --panel-strong: rgba(255,255,255,0.12);
+      --text: #e8eaf6;
+      --muted: #151a2c;
+      --accent: #7c5cff;
+      --accent-2: #00d4ff;
+      --danger: #ff6b6b;
+      --success: #2ecc71;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius-xl: 20px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; padding:24px; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      color:var(--text); background:
+      radial-gradient(1000px 600px at 10% -10%, rgba(124,92,255,.25), transparent 60%),
+      radial-gradient(900px 500px at 110% 0%, rgba(0,212,255,.25), transparent 60%),
+      linear-gradient(180deg, #0b0d1a, #121530 60%, #0c0f24);
+    }
+    .container{max-width:1100px; margin:0 auto;}
+    .app-header{
+      display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px;
+    }
+    .title{
+      font-size: clamp(20px, 4vw, 32px); font-weight:700; letter-spacing:.3px;
+      display:flex; align-items:center; gap:12px;
+    }
+    .badge{font-size:12px; color:var(--muted); background:var(--panel); padding:6px 10px; border-radius:999px; border:1px solid var(--panel-strong)}
+
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns: 1.3fr .9fr;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{ background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      backdrop-filter: blur(10px); border:1px solid var(--panel-strong); border-radius:var(--radius-xl);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--panel-strong);}
+    .card-title{ font-size:16px; font-weight:600; color:#fff;}
+    .card-body{ padding:18px; }
+
+    /* Week nav */
+    .week-nav{ display:flex; align-items:center; gap:10px; }
+    .btn{ cursor:pointer; user-select:none; border:none; border-radius:12px; padding:10px 12px; background:var(--panel); color:var(--text); transition: .15s transform ease, .2s background ease; border:1px solid var(--panel-strong)}
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.1); }
+    .btn:active{ transform: translateY(0); }
+    .btn.primary{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); border:none; color:#0b0d1a; font-weight:700; }
+
+    /* Inputs */
+    .form{ display:grid; gap:12px; }
+    .field{ display:grid; gap:8px; }
+    label{ color:var(--muted); font-size:12px; letter-spacing:.2px; }
+    input, select, textarea{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--panel-strong); background:rgba(8,10,22,.6); color:var(--text);
+      outline:none; transition:border .15s ease, background .15s ease; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    input::placeholder, textarea::placeholder{ color:#9aa3c8; }
+    input:focus, select:focus, textarea:focus{ border-color: rgba(124,92,255,.7); background: rgba(255,255,255,0.06); }
+
+    /* Chart */
+    #chartWrap{ height:300px; position:relative; }
+    canvas{ width:100%; height:100%; display:block; }
+    .legend{ display:flex; gap:12px; align-items:center; color:var(--muted); font-size:12px; margin-top:8px; }
+    .legend .dot{ width:10px; height:10px; border-radius:2px; display:inline-block; background:linear-gradient(135deg, var(--accent), var(--accent-2)); }
+
+    /* Daily totals */
+    .daily-grid{ display:grid; grid-template-columns: repeat(7,1fr); gap:10px; }
+    @media (max-width: 980px){ .daily-grid{ grid-template-columns: repeat(3,1fr);} }
+    @media (max-width: 540px){ .daily-grid{ grid-template-columns: repeat(2,1fr);} }
+    .day-card{ background:rgba(255,255,255,0.04); border:1px solid var(--panel-strong); border-radius:14px; padding:12px; display:grid; gap:6px; }
+    .day-name{ font-size:12px; color:var(--muted); }
+    .day-date{ font-size:12px; color:#c6cae5; }
+    .day-amt{ font-size:18px; font-weight:700; }
+
+    /* Transactions */
+    .table{ width:100%; border-collapse:collapse; }
+    .table th, .table td{ padding:12px; border-bottom:1px solid var(--panel-strong); text-align:left; font-size:14px; }
+    .table th{ color:var(--muted); font-weight:600; }
+    .pill{ padding:6px 10px; border-radius:999px; background:rgba(124,92,255,.18); border:1px solid rgba(124,92,255,.35); font-size:12px; }
+    .empty{ color:var(--muted); text-align:center; padding:18px; border:1px dashed var(--panel-strong); border-radius:12px; }
+
+    .footer{ margin-top:18px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px; justify-content:space-between;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <div class="title">$ Weekly Expense Tracker <span class="badge">HTML • CSS • JS</span></div>
+      <div class="week-nav">
+        <button class="btn" id="prevWeek">◀ Prev</button>
+        <div id="weekLabel" class="badge"></div>
+        <button class="btn" id="nextWeek">Next ▶</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left: Chart + Daily totals -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">Weekly Spend Overview</div>
+          <div class="legend"><span class="dot"></span>Expenses</div>
+        </div>
+        <div class="card-body">
+          <div id="chartWrap"><canvas id="barChart" width="900" height="300" aria-label="Weekly expenses bar chart" role="img"></canvas></div>
+          <div class="daily-grid" id="dailyGrid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- Right: Add expense -->
+      <section class="card">
+        <div class="card-header"><div class="card-title">Add Expense</div></div>
+        <div class="card-body">
+          <form id="expenseForm" class="form">
+            <div class="field">
+              <label for="amount">Amount (₹)</label>
+              <input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="e.g. 199.99" required />
+            </div>
+            <div class="field">
+              <label for="category">Category</label>
+              <select id="category" name="category" required>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="date">Date</label>
+              <input id="date" name="date" type="date" required />
+            </div>
+            <div class="field">
+              <label for="note">Note (optional)</label>
+              <input id="note" name="note" type="text" placeholder="Short note" />
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="btn primary" type="submit">+ Add</button>
+              <button type="button" class="btn" id="clearAll" title="Delete all saved expenses">Clear All</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <!-- Transactions list -->
+    <section class="card" style="margin-top:18px;">
+      <div class="card-header">
+        <div class="card-title">This Week's Transactions</div>
+        <div class="badge" id="weekTotal">Total: ₹0</div>
+      </div>
+      <div class="card-body">
+        <table class="table" id="txTable">
+          <thead>
+            <tr><th>Date</th><th>Amount</th><th>Category</th><th>Note</th><th></th></tr>
+          </thead>
+          <tbody id="txBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" hidden>No expenses yet for this week. Add your first one →</div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>Data is saved in your browser (localStorage).</div>
+      <div>
+        <button class="btn" id="exportBtn">Export JSON</button>
+        <input type="file" id="importInput" accept="application/json" style="display:none" />
+        <button class="btn" id="importBtn">Import JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Utilities =====
+    const pad = n => String(n).padStart(2,'0');
+    const fmtDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+    function startOfWeek(date){ // Monday as start
+      const d = new Date(date);
+      const day = (d.getDay()+6)%7; // 0..6 with Mon=0
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate()-day);
+      return d;
+    }
+    function endOfWeek(date){
+      const s = startOfWeek(date);
+      const e = new Date(s);
+      e.setDate(e.getDate()+6);
+      e.setHours(23,59,59,999);
+      return e;
+    }
+
+    // ===== Storage Layer =====
+    const STORAGE_KEY = 'expenses_v1';
+    function loadAll(){
+      try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+      catch{ return []; }
+    }
+    function saveAll(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+
+    // ===== State =====
+    let state = {
+      refDate: new Date(), // controls selected week
+      items: loadAll()
+    };
+
+    // ===== DOM refs =====
+    const weekLabel = document.getElementById('weekLabel');
+    const weekTotal = document.getElementById('weekTotal');
+    const txBody = document.getElementById('txBody');
+    const emptyState = document.getElementById('emptyState');
+    const dailyGrid = document.getElementById('dailyGrid');
+
+    const ctx = document.getElementById('barChart').getContext('2d');
+
+    // ===== Chart (Vanilla Canvas) =====
+    function drawBarChart(values){
+      const canvas = ctx.canvas;
+      const W = canvas.width; const H = canvas.height;
+      ctx.clearRect(0,0,W,H);
+
+      // Background grid
+      const margin = {l:50, r:20, t:16, b:36};
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.fillRect(0,0,W,H);
+      ctx.restore();
+
+      const maxVal = Math.max(100, ...values); // ensure some height
+      const steps = 4;
+      ctx.font = '12px Inter, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.fillStyle = '#b0b7d1';
+      for(let i=0;i<=steps;i++){
+        const y = margin.t + (H - margin.t - margin.b) * (i/steps);
+        ctx.beginPath();
+        ctx.moveTo(margin.l, y);
+        ctx.lineTo(W - margin.r, y);
+        ctx.stroke();
+        const val = Math.round(maxVal * (1 - i/steps));
+        ctx.fillText(`₹${val}`, 8, y);
+      }
+
+      // Bars
+      const n = values.length;
+      const plotW = W - margin.l - margin.r;
+      const plotH = H - margin.t - margin.b;
+      const gap = 16;
+      const barW = (plotW - gap*(n-1)) / n;
+
+      for(let i=0;i<n;i++){
+        const v = values[i];
+        const x = margin.l + i*(barW+gap);
+        const h = (v/maxVal)*plotH;
+        const y = margin.t + (plotH - h);
+
+        // Bar gradient
+        const g = ctx.createLinearGradient(0, y, 0, y+h);
+        g.addColorStop(0, '#7c5cff');
+        g.addColorStop(1, '#00d4ff');
+        ctx.fillStyle = g;
+        const radius = 8;
+        // rounded rect bar
+        roundRect(ctx, x, y, barW, h, radius);
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = '#c6cae5';
+        ctx.textAlign = 'center';
+        ctx.fillText(dayLabels[i], x + barW/2, H - margin.b/2);
+
+        // Value on top
+        if(v>0){
+          ctx.fillStyle = '#ffffff';
+          ctx.textAlign = 'center';
+          ctx.fillText(`₹${v.toFixed(0)}`, x + barW/2, y - 10);
+        }
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r){
+      const radius = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+radius, y);
+      ctx.lineTo(x+w-radius, y);
+      ctx.quadraticCurveTo(x+w, y, x+w, y+radius);
+      ctx.lineTo(x+w, y+h-radius);
+      ctx.quadraticCurveTo(x+w, y+h, x+w-radius, y+h);
+      ctx.lineTo(x+radius, y+h);
+      ctx.quadraticCurveTo(x, y+h, x, y+h-radius);
+      ctx.lineTo(x, y+radius);
+      ctx.quadraticCurveTo(x, y, x+radius, y);
+      ctx.closePath();
+    }
+
+    // ===== Render =====
+    function render(){
+      const s = startOfWeek(state.refDate);
+      const e = endOfWeek(state.refDate);
+      weekLabel.textContent = `${s.toLocaleDateString(undefined,{day:'2-digit', month:'short'})} — ${e.toLocaleDateString(undefined,{day:'2-digit', month:'short', year:'numeric'})}`;
+
+      // Filter items this week
+      const weekItems = state.items.filter(it => {
+        const d = new Date(it.date);
+        return d >= s && d <= e;
+      }).sort((a,b)=> new Date(b.date)-new Date(a.date));
+
+      // Daily totals
+      const totals = Array(7).fill(0);
+      for(const it of weekItems){
+        const d = new Date(it.date);
+        const idx = (d.getDay()+6)%7;
+        totals[idx] += Number(it.amount) || 0;
+      }
+      drawBarChart(totals.map(v=>Math.round(v)));
+
+      // render daily cards
+      dailyGrid.innerHTML = '';
+      for(let i=0;i<7;i++){
+        const d = new Date(s); d.setDate(s.getDate()+i);
+        const card = document.createElement('div');
+        card.className = 'day-card';
+        card.innerHTML = `<div class="day-name">${dayLabels[i]}</div>
+                          <div class="day-date">${d.toLocaleDateString(undefined,{day:'2-digit', month:'short'})}</div>
+                          <div class="day-amt">₹${totals[i].toFixed(2)}</div>`;
+        dailyGrid.appendChild(card);
+      }
+
+      // Transactions table
+      txBody.innerHTML = '';
+      if(weekItems.length===0){
+        emptyState.hidden = false;
+      } else {
+        emptyState.hidden = true;
+        for(const it of weekItems){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${new Date(it.date).toLocaleDateString()}</td>
+            <td><strong>₹${Number(it.amount).toFixed(2)}</strong></td>
+            <td><span class="pill">${it.category}</span></td>
+            <td>${it.note ? escapeHtml(it.note) : ''}</td>
+            <td style="text-align:right"><button class="btn" data-del="${it.id}">Delete</button></td>`;
+          txBody.appendChild(tr);
+        }
+      }
+
+      const sum = totals.reduce((a,b)=>a+b,0);
+      weekTotal.textContent = `Total: ₹${sum.toFixed(2)}`;
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"]+/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]));
+    }
+
+    // ===== Events =====
+    document.getElementById('prevWeek').addEventListener('click', ()=>{ state.refDate.setDate(state.refDate.getDate()-7); render(); });
+    document.getElementById('nextWeek').addEventListener('click', ()=>{ state.refDate.setDate(state.refDate.getDate()+7); render(); });
+
+    document.getElementById('expenseForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('amount').value);
+      const category = document.getElementById('category').value;
+      const date = document.getElementById('date').value;
+      const note = document.getElementById('note').value.trim();
+      if(!date || !(amount>=0)) return;
+      const item = { id: crypto.randomUUID(), amount, category, date, note };
+      state.items.push(item);
+      saveAll(state.items);
+      e.target.reset();
+      document.getElementById('date').value = fmtDate(new Date());
+      render();
+    });
+
+    txBody.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-del]');
+      if(!btn) return;
+      const id = btn.getAttribute('data-del');
+      state.items = state.items.filter(x => x.id !== id);
+      saveAll(state.items);
+      render();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', ()=>{
+      if(confirm('Delete ALL saved expenses?')){
+        state.items = []; saveAll(state.items); render();
+      }
+    });
+
+    // Export / Import
+    document.getElementById('exportBtn').addEventListener('click', ()=>{
+      const data = JSON.stringify(state.items, null, 2);
+      const blob = new Blob([data], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `expenses-${Date.now()}.json`; a.click();
+      URL.revokeObjectURL(url);
+    });
+    const importInput = document.getElementById('importInput');
+    document.getElementById('importBtn').addEventListener('click', ()=> importInput.click());
+    importInput.addEventListener('change', ()=>{
+      const file = importInput.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const data = JSON.parse(reader.result);
+          if(Array.isArray(data)){
+            state.items = data; saveAll(state.items); render();
+          } else alert('Invalid JSON format.');
+        }catch(err){ alert('Failed to parse JSON.'); }
+      };
+      reader.readAsText(file);
+      importInput.value = '';
+    });
+
+    // ===== Init =====
+    (function init(){
+      // set default date input to today
+      document.getElementById('date').value = fmtDate(new Date());
+      // make canvas crisp on HiDPI
+      crispCanvas();
+      window.addEventListener('resize', crispCanvas);
+      render();
+    })();
+
+    function crispCanvas(){
+      const canvas = ctx.canvas;
+      const ratio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      ctx.setTransform(ratio,0,0,ratio,0,0); // use CSS pixels for drawing values
+      render(); // redraw after resize
+    }
+  </script>
+</body>
+</html>

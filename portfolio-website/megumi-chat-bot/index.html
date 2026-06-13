@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MegumiBot Chat & Auth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for better styling on dark background */
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: #5b21b6 #1f2937; /* thumb color track color */
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #5b21b6; /* Violet-700 */
+            border-radius: 20px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #1f2937; /* Gray-800 */
+        }
+        /* Style for the login card shadow */
+        .login-card {
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4); 
+            transition: transform 0.3s ease;
+        }
+        .login-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-950 text-gray-100 flex flex-col min-h-screen">
+
+    <!-- Primary Application Container -->
+    <div id="app-container" class="flex-grow flex flex-col w-full">
+
+        <!-- 1. LOGIN/REGISTER VIEW (Dynamic Content) -->
+        <div id="login-view" class="flex-grow flex items-center justify-center p-4">
+            <div class="w-full max-w-md">
+                <!-- Auth Card -->
+                <div class="login-card bg-gray-900 p-8 md:p-10 rounded-3xl border border-violet-800/50">
+                    <!-- Dynamic Title and Subtitle -->
+                    <h1 id="auth-title" class="text-4xl font-extrabold text-center mb-2 text-violet-400">Welcome Back</h1>
+                    <p id="auth-subtitle" class="text-center mb-8 text-gray-400">Sign in to access the MegumiBot assistant.</p>
+
+                    <!-- Status Message Area -->
+                    <div id="login-status-message" class="hidden p-3 mb-4 rounded-xl text-sm font-medium transition-all duration-300" role="alert"></div>
+
+                    <form id="login-form">
+                        <div class="mb-5">
+                            <label for="email" class="block text-sm font-semibold mb-2 text-gray-300">Email Address</label>
+                            <input type="email" id="email" required autocomplete="username"
+                                class="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition duration-150"
+                                placeholder="you@example.com" value="user@example.com" />
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-semibold mb-2 text-gray-300">Password</label>
+                            <input type="password" id="password" required autocomplete="current-password"
+                                class="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition duration-150"
+                                placeholder="********" value="password123" />
+                        </div>
+
+                        <!-- Dynamic Auth Button -->
+                        <button type="submit" id="login-btn"
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-3 rounded-xl transition duration-200 shadow-md shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                            <span id="button-text">Log In</span>
+                            <!-- Loading Spinner -->
+                            <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                    
+                    <!-- Auth Mode Toggle Link -->
+                    <p class="mt-6 text-center text-gray-500 text-sm">
+                        <span id="toggle-auth-text">Don't have an account?</span> 
+                        <a href="#" id="toggle-auth-link" class="text-violet-400 hover:text-violet-300 font-semibold transition duration-150">Sign up here.</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CHAT VIEW (Initially hidden) -->
+        <div id="chat-view" class="hidden flex flex-col h-screen max-h-screen">
+            <!-- Nav Bar (from previous chat UI) -->
+            <nav class="flex items-center justify-between bg-violet-950 p-4 shadow-2xl shadow-violet-800/30 flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        stroke-linecap="round" stroke-linejoin="round" >
+                        <path d="M12 20l9-5-9-5-9 5 9 5z"></path>
+                        <path d="M12 12l9-5-9-5-9 5 9 5z"></path>
+                    </svg>
+                    <span class="text-xl font-extrabold select-none tracking-wide">MegumiBot</span>
+                </div>
+                <div class="flex items-center space-x-3 cursor-pointer hover:opacity-90 transition" id="user-profile-btn" title="Log Out">
+                    <img src="https://i.pravatar.cc/40" alt="User avatar" class="w-10 h-10 rounded-full border-2 border-emerald-400 ring-2 ring-emerald-600" />
+                    <span id="display-username" class="font-medium hidden sm:inline">User</span>
+                    <button id="logout-btn" class="text-red-400 hover:text-red-500 font-medium text-sm ml-2">Logout</button>
+                </div>
+            </nav>
+
+            <!-- Main Chat Messages Area -->
+            <main id="chat-messages" class="flex-grow overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin"></main>
+
+            <!-- Footer (from previous chat UI) -->
+            <footer class="bg-gray-900 p-4 flex items-center space-x-4 flex-shrink-0 border-t border-violet-900">
+                <textarea id="chat-input" rows="1" required
+                    placeholder="Type your message..."
+                    aria-label="Message input"
+                    class="flex-grow resize-none rounded-2xl bg-gray-800 p-3 text-gray-50 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition duration-150"
+                ></textarea>
+                <button id="send-btn" disabled
+                    class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-900 disabled:opacity-50 rounded-2xl px-6 py-3 font-bold transition duration-200 text-white cursor-pointer disabled:cursor-not-allowed shadow-lg shadow-emerald-600/30"
+                >Send</button>
+            </footer>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- FIREBASE IMPORTS (The "Backend" for Auth) ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL APP STATE & CONSTANTS ---
+        let isAuthenticated = false;
+        let currentAuthMode = 'login'; // 'login' or 'register'
+        // This URL is for the chat bot API, not the authentication.
+        const CHAT_API_URL = 'http://localhost:4002/api/chatbot/message'; 
+
+        // --- FIREBASE SETUP ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // Sign in immediately using the provided token or anonymously
+            async function signInUser() {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        isAuthenticated = true; 
+                        renderView();
+                        initializeChat();
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    console.log("Firebase Auth initialized successfully.");
+                } catch (error) {
+                    console.error("Firebase Auth failed:", error);
+                }
+            }
+            signInUser();
+        } else {
+            console.warn("Firebase config not found. Persistence disabled. Using client-side simulation.");
+        }
+
+
+        // --- DOM Elements for Login View ---
+        const loginView = document.getElementById('login-view');
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loginButtonText = document.getElementById('button-text');
+        const loginLoadingSpinner = document.getElementById('loading-spinner');
+        const loginStatusMessage = document.getElementById('login-status-message');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        // New elements for dynamic content
+        const authTitle = document.getElementById('auth-title');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const toggleAuthText = document.getElementById('toggle-auth-text');
+        const toggleAuthLink = document.getElementById('toggle-auth-link');
+
+
+        // --- DOM Elements for Chat View ---
+        const chatView = document.getElementById('chat-view');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+
+
+        // --- VIEW MANAGEMENT ---
+
+        /** Toggles between the Login and Chat views. */
+        function renderView() {
+            if (isAuthenticated) {
+                loginView.classList.add('hidden');
+                chatView.classList.remove('hidden');
+                // Ensure chat UI takes up full screen height
+                document.body.classList.remove('flex-col', 'items-center', 'justify-center');
+                document.body.classList.add('h-screen'); 
+            } else {
+                loginView.classList.remove('hidden');
+                chatView.classList.add('hidden');
+                document.body.classList.remove('h-screen');
+                document.body.classList.add('flex-col', 'items-center', 'justify-center');
+            }
+        }
+
+        /** Updates the login-view UI based on the currentAuthMode ('login' or 'register'). */
+        function updateAuthUI() {
+            if (currentAuthMode === 'login') {
+                authTitle.textContent = 'Welcome Back';
+                authSubtitle.textContent = 'Sign in to access the MegumiBot assistant.';
+                loginButtonText.textContent = 'Log In';
+                toggleAuthText.textContent = "Don't have an account?";
+                toggleAuthLink.textContent = "Sign up here.";
+            } else {
+                authTitle.textContent = 'Create Account';
+                authSubtitle.textContent = 'Register a new account to get started.';
+                loginButtonText.textContent = 'Register';
+                toggleAuthText.textContent = "Already have an account?";
+                toggleAuthLink.textContent = "Log in here.";
+            }
+        }
+
+        // Handler to switch between login and register views
+        toggleAuthLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginStatusMessage.classList.add('hidden'); // Clear status message
+            currentAuthMode = (currentAuthMode === 'login' ? 'register' : 'login');
+            updateAuthUI();
+        });
+
+
+        // --- LOGIN/REGISTER LOGIC (Real Firebase Auth) ---
+
+        /** Utility function to display a status message (success or error) in the login view. */
+        function displayLoginStatus(message, type) {
+            loginStatusMessage.textContent = message;
+            loginStatusMessage.classList.remove('hidden', 'bg-red-900/50', 'text-red-300', 'bg-emerald-900/50', 'text-emerald-300');
+            
+            if (type === 'success') {
+                loginStatusMessage.classList.add('bg-emerald-900/50', 'text-emerald-300');
+            } else {
+                loginStatusMessage.classList.add('bg-red-900/50', 'text-red-300');
+            }
+        }
+
+        /** Toggles the loading state of the login button. */
+        function setLoading(isLoading) {
+            loginBtn.disabled = isLoading;
+            if (isLoading) {
+                loginButtonText.textContent = 'Authenticating...';
+                loginLoadingSpinner.classList.remove('hidden');
+                loginBtn.classList.add('bg-emerald-800');
+            } else {
+                loginButtonText.textContent = currentAuthMode === 'login' ? 'Log In' : 'Register';
+                loginLoadingSpinner.classList.add('hidden');
+                loginBtn.classList.remove('bg-emerald-800');
+            }
+        }
+
+        // Login form submission handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginStatusMessage.classList.add('hidden');
+            setLoading(true);
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!auth) {
+                // FALLBACK: If Firebase isn't initialized, simulate the success
+                console.warn("Firebase Auth not initialized. Using client-side simulation.");
+                await new Promise(resolve => setTimeout(resolve, 800)); 
+                if (email === 'user@example.com' && password === 'password123') {
+                    isAuthenticated = true;
+                    displayLoginStatus('Login successful! Redirecting...', 'success');
+                    setTimeout(() => { renderView(); initializeChat(); }, 1000);
+                } else {
+                    displayLoginStatus('Login failed: Invalid email or password.', 'error');
+                }
+                setLoading(false);
+                return; 
+            }
+
+            try {
+                if (currentAuthMode === 'register') {
+                    // Firebase Registration
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    displayLoginStatus('Registration successful! Logging you in...', 'success');
+                } else { 
+                    // Firebase Login
+                    await signInWithEmailAndPassword(auth, email, password);
+                    displayLoginStatus('Login successful! Redirecting...', 'success');
+                }
+
+                isAuthenticated = true;
+                // Switch view after user sees success message
+                setTimeout(() => {
+                    renderView(); 
+                    initializeChat(); 
+                }, 1000);
+
+            } catch (error) {
+                console.error(`Auth error (${currentAuthMode}):`, error.code, error.message);
+                let userFriendlyError = 'An unexpected authentication error occurred.';
+
+                // Determine context-specific error message
+                const action = currentAuthMode === 'login' ? 'Login' : 'Registration';
+
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        userFriendlyError = 'This email address is already in use. Please log in.';
+                        break;
+                    case 'auth/invalid-email':
+                        userFriendlyError = 'The email address format is invalid.';
+                        break;
+                    case 'auth/weak-password':
+                        userFriendlyError = 'Password is too weak. Must be at least 6 characters.';
+                        break;
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                    case 'auth/invalid-credential':
+                        userFriendlyError = 'Invalid credentials. Please check your email and password.';
+                        break;
+                    default:
+                        // Strip internal Firebase code from message
+                        userFriendlyError = `Error: ${error.message.split('(')[0].trim()}`;
+                }
+                displayLoginStatus(`${action} Failed: ${userFriendlyError}`, 'error');
+
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Logout handler
+        logoutBtn.addEventListener('click', () => {
+            if (auth) {
+                auth.signOut();
+            }
+            isAuthenticated = false;
+            renderView();
+            // Clear messages for next user
+            chatMessages.innerHTML = '';
+            displayLoginStatus('You have been successfully logged out.', 'success');
+        });
+
+
+        // --- CHAT LOGIC ---
+
+        /** Appends a message to the chat area with specific styling. */
+        function appendMessage(text, sender) {
+            if (!text || !text.trim()) return; 
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add(
+                "max-w-[75%]", "p-4", "rounded-2xl", "break-words", "whitespace-pre-wrap", "shadow-xl"
+            );
+            if (sender === 'user') {
+                msgDiv.classList.add("bg-violet-600", "text-white", "ml-auto", "rounded-br-lg"); 
+            } else {
+                msgDiv.classList.add("bg-gray-800", "text-emerald-300", "mr-auto", "rounded-bl-lg");
+            }
+            msgDiv.textContent = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // auto scroll
+            return msgDiv;
+        }
+
+        /** Sends message to backend and gets reply. */
+        async function sendMessageToBackend(message) {
+            // Note: This still attempts to contact the external chat backend on port 4002
+            try {
+                const response = await fetch(CHAT_API_URL, { 
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: message})
+                });
+                
+                const data = await response.json();
+
+                if (!response.ok) {
+                    console.error('Backend HTTP Error:', response.status, data.error);
+                    throw new Error(data.error || `HTTP error! Status: ${response.status}`);
+                }
+                
+                return data.reply || 'Sorry, no reply from server.';
+            } catch (error) {
+                console.error('Error contacting chat backend:', error);
+                return 'Error: Could not reach the chatbot server. Please check server logs and ensure it is running on port 4002.';
+            }
+        }
+        
+        /** Handles all UI interactions for sending messages. */
+        async function handleSendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            appendMessage(message, 'user');
+            chatInput.value = '';
+            sendBtn.disabled = true;
+            chatInput.style.height = 'auto'; // Reset textarea height
+
+            // Show typing indicator
+            const typingBubble = document.createElement('div');
+            typingBubble.className = "max-w-[75%] p-4 rounded-2xl bg-gray-800 text-gray-500 mr-auto rounded-bl-lg italic shadow-xl";
+            typingBubble.textContent = "MegumiBot is typing...";
+            chatMessages.appendChild(typingBubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Await backend response
+            const botReply = await sendMessageToBackend(message);
+
+            // Remove typing indicator ONLY if it is still there
+            if (chatMessages.contains(typingBubble)) {
+                chatMessages.removeChild(typingBubble); 
+            }
+            
+            // Show response
+            appendMessage(botReply, 'bot');
+        }
+
+        /** Initialize chat listeners and welcome message */
+        function initializeChat() {
+            // Set up chat input listeners
+            chatInput.addEventListener('input', () => {
+                sendBtn.disabled = !chatInput.value.trim();
+                chatInput.style.height = 'auto';
+                chatInput.style.height = chatInput.scrollHeight + 'px';
+            });
+
+            // Enter key submission for chat
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); 
+                    if (!sendBtn.disabled) {
+                        handleSendMessage();
+                    }
+                }
+            });
+
+            sendBtn.addEventListener('click', handleSendMessage);
+            
+            // Display initial welcome message only once
+            if (chatMessages.children.length === 0) {
+                appendMessage("Hello! You are now securely logged in. I'm your assistant, ask me anything.", 'bot');
+            }
+        }
+
+
+        // --- INITIALIZATION ---
+        // Render the correct view when the page loads (defaults to login)
+        window.onload = function() {
+            // Only set initial view if the initial auth token wasn't processed yet
+            if (!isAuthenticated) {
+                renderView();
+            }
+            updateAuthUI();
+        }
+    </script>
+
+</body>
+</html>

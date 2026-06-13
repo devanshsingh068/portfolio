@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects & Experience | Devansh Singh</title>
+    <meta name="description" content="Explore projects, experience timeline, and contact information for Devansh Singh.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- STICKY HEADER -->
+    <header class="header">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                Devansh<span>.</span>
+            </a>
+            
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#skills" class="nav-link">Skills</a>
+                <a href="projects.html" class="nav-link active">Projects</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+
+            <div class="nav-controls">
+                <!-- ACCENT COLOR CUSTOMIZER -->
+                <div class="palette-switcher" title="Customize Accent Color">
+                    <span class="palette-dot dot-blue active" data-theme="blue"></span>
+                    <span class="palette-dot dot-terracotta" data-theme="terracotta"></span>
+                    <span class="palette-dot dot-teal" data-theme="teal"></span>
+                    <span class="palette-dot dot-purple" data-theme="purple"></span>
+                </div>
+                
+                <!-- DARK MODE TOGGLE -->
+                <button class="mode-toggle" id="modeToggle" title="Toggle Dark/Light Mode">
+                    <i data-lucide="moon"></i>
+                </button>
+
+                <!-- MOBILE HAMBURGER -->
+                <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROJECTS SECTION -->
+    <section class="section" id="projects" style="padding-top: 130px;">
+        <div class="container">
+            <div class="section-header fade-in">
+                <p class="section-subtitle">My work portfolio</p>
+                <h2 class="section-title">Selected Projects</h2>
+            </div>
+
+            <!-- Category Filter Bar -->
+            <div class="filter-bar fade-in">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="design">Creative UI</button>
+                <button class="filter-btn" data-filter="fullstack">Fullstack Development</button>
+                <button class="filter-btn" data-filter="systems">Systems & AI</button>
+            </div>
+
+            <!-- Bento Project Grid -->
+            <div class="bento-grid" style="grid-auto-rows: minmax(180px, auto);">
+                
+                <!-- Featured Project 1 (Col-2, Row-2) -->
+                <div class="bento-card col-2 row-2 project-card fade-in" data-category="fullstack" data-tilt>
+                    <div class="project-badge">Featured</div>
+                    <div class="project-image" style="height: 240px;">
+                        <img src="rapid_dispatch.png" alt="ResourceLink Dashboard">
+                    </div>
+                    <div class="project-details">
+                        <div>
+                            <h3 class="project-title">ResourceLink – Emergency Assistance</h3>
+                            <p class="project-desc">
+                                A public utility dashboard delivering free ambulance coordination, instant fire department routing, and an integrated paid food delivery checkout system. Built with React and Firebase.
+                            </p>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://rapiddispatch-4320a.web.app" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo <i data-lucide="external-link"></i></a>
+                            <a href="#" class="project-link">Code <i data-lucide="github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 (Col-1, Row-2) -->
+                <div class="bento-card col-1 row-2 project-card fade-in" data-category="design" data-tilt>
+                    <div class="project-image" style="height: 180px;">
+                        <img src="tic_tac_toe.png" alt="Tic-Tac-Toe Glassmorphism">
+                    </div>
+                    <div class="project-details" style="padding: 16px;">
+                        <div>
+                            <h3 class="project-title" style="font-size: 1.15rem;">Tic-Tac-Toe Game</h3>
+                            <p class="project-desc" style="font-size: 0.85rem; margin-bottom: 8px;">
+                                Interactive gameplay designed with frosted glassmorphism UI tiles, animated winning strikes, and synchronized sounds.
+                            </p>
+                        </div>
+                        <div class="project-links" style="margin-top: 12px;">
+                            <a href="tic-tac-toe-game/index.html" class="project-link" style="font-size: 0.8rem;" target="_blank">Play Game <i data-lucide="external-link"></i></a>
+                            <a href="https://github.com/devanshsingh068/tic-tac-toe-game" class="project-link" style="font-size: 0.8rem;" target="_blank">Code <i data-lucide="github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 (Col-1, Row-2) -->
+                <div class="bento-card col-1 row-2 project-card fade-in" data-category="systems" data-tilt>
+                    <div class="project-image" style="height: 180px;">
+                        <img src="megumi_bot.png" alt="Megumi Chat Bot">
+                    </div>
+                    <div class="project-details" style="padding: 16px;">
+                        <div>
+                            <h3 class="project-title" style="font-size: 1.15rem;">Megumi Chat Bot</h3>
+                            <p class="project-desc" style="font-size: 0.85rem; margin-bottom: 8px;">
+                                A conversational bot interface powered by React, Express routing controllers, and custom state managers.
+                            </p>
+                        </div>
+                        <div class="project-links" style="margin-top: 12px;">
+                            <a href="https://github.com/devanshsingh068/megumi-chat-bot" class="project-link" style="font-size: 0.8rem;" target="_blank">Code <i data-lucide="github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 (Col-2, Row-1) -->
+                <div class="bento-card col-2 row-1 project-card fade-in" data-category="design" data-tilt style="flex-direction: row; height: 180px; align-items: center; padding: 20px;">
+                    <div class="project-image" style="width: 150px; height: 100%; border-radius: 12px; border-bottom: none; border-right: 1px solid var(--border-color);">
+                        <img src="expense_tracker.png" alt="Weekly Expense Tracker">
+                    </div>
+                    <div class="project-details" style="padding-left: 20px; height: 100%; justify-content: center;">
+                        <h3 class="project-title" style="font-size: 1.2rem; margin-bottom: 6px;">Weekly Expense Tracker</h3>
+                        <p class="project-desc" style="font-size: 0.85rem; margin-bottom: 8px;">
+                            A glassmorphic personal finance dashboard utilizing custom HTML5 Canvas charts and local storage persistence.
+                        </p>
+                        <div class="project-links">
+                            <a href="expense-tracker/index.html" class="project-link" style="font-size: 0.8rem;" target="_blank">Launch <i data-lucide="external-link"></i></a>
+                            <a href="https://github.com/devanshsingh068/Expense-tracker" class="project-link" style="font-size: 0.8rem;" target="_blank">Code <i data-lucide="github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5 (Col-2, Row-1) -->
+                <div class="bento-card col-2 row-1 project-card fade-in" data-category="systems" data-tilt style="flex-direction: row; height: 180px; align-items: center; padding: 20px;">
+                    <div class="project-image" style="width: 150px; height: 100%; border-radius: 12px; border-bottom: none; border-right: 1px solid var(--border-color);">
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=300&h=300&fit=crop" alt="Data analysis">
+                    </div>
+                    <div class="project-details" style="padding-left: 20px; height: 100%; justify-content: center;">
+                        <h3 class="project-title" style="font-size: 1.2rem; margin-bottom: 6px;">Vortex API Router</h3>
+                        <p class="project-desc" style="font-size: 0.85rem; margin-bottom: 8px;">
+                            A high-throughput middleware gateway that distributes, caches, and logs system API requests.
+                        </p>
+                        <div class="project-links">
+                            <a href="#" class="project-link" style="font-size: 0.8rem;">Code <i data-lucide="github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- TIMELINE SECTION -->
+    <section class="section" id="experience" style="background: rgba(148, 163, 184, 0.05);">
+        <div class="container">
+            <div class="section-header fade-in">
+                <p class="section-subtitle">My history</p>
+                <h2 class="section-title">Work & Experience</h2>
+            </div>
+
+            <div class="timeline">
+                
+                <!-- Timeline item 1 -->
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2024 - Present</div>
+                    <div class="timeline-card">
+                        <h4>Lead Frontend Architect</h4>
+                        <h5>Quantum Tech Solutions</h5>
+                        <p>
+                            Designed micro-frontend modules and unified design token directories, improving loading performance by 40% and cross-team development velocity.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Timeline item 2 -->
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2022 - 2024</div>
+                    <div class="timeline-card">
+                        <h4>Senior Javascript Developer</h4>
+                        <h5>Apex Creative Studio</h5>
+                        <p>
+                            Constructed animations, Canvas interactions, and customized dashboards for international clients. Collaborated closely with design team.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Timeline item 3 -->
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2020 - 2022</div>
+                    <div class="timeline-card">
+                        <h4>Software Engineer</h4>
+                        <h5>Hyperion Apps</h5>
+                        <p>
+                            Maintained REST integrations, database models, and internal dashboard pages. Worked closely in a remote-first agile team.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="section contact-section" id="contact">
+        <div class="container contact-grid">
+            <div class="contact-info fade-in">
+                <p class="section-subtitle">Let's talk</p>
+                <h2 class="section-title" style="margin-bottom: 20px;">Contact Me</h2>
+                <p style="color: var(--text-secondary);">
+                    Have a question, feedback, or a project in mind? Fill out the form, or reach out directly via my socials or email address. I am looking forward to connecting!
+                </p>
+
+                <div class="contact-details-list">
+                    <div class="contact-detail-item">
+                        <div class="contact-icon"><i data-lucide="mail"></i></div>
+                        <div class="contact-text">
+                            <h4>Email</h4>
+                            <p>devanshsingh2400@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-detail-item">
+                        <div class="contact-icon"><i data-lucide="phone"></i></div>
+                        <div class="contact-text">
+                            <h4>Phone</h4>
+                            <p>+91 8840382283</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form Card -->
+            <div class="form-card fade-in">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" class="form-input" placeholder=" " required>
+                        <label for="name" class="form-label">Full Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" class="form-input" placeholder=" " required>
+                        <label for="email" class="form-label">Email Address</label>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" class="form-input" placeholder=" " required></textarea>
+                        <label for="message" class="form-label">Your Message</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%;">
+                        Send Message <i data-lucide="send"></i>
+                    </button>
+                </form>
+                
+                <!-- Success Message -->
+                <div id="formSuccess" style="display: none; text-align: center; padding: 20px 0;">
+                    <div class="meta-icon" style="margin: 0 auto 16px; background: rgba(16, 185, 129, 0.1); color: #10b981; width: 60px; height: 60px;">
+                        <i data-lucide="check" style="width: 32px; height: 32px;"></i>
+                    </div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 8px;">Message Sent!</h3>
+                    <p style="color: var(--text-secondary);">Thank you for reaching out. I'll get back to you shortly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="logo">
+                Devansh<span>.</span>
+            </div>
+            <p class="copyright">© 2026 Devansh Singh. Built with passion & 3D tilts.</p>
+            <div class="social-links">
+                <a href="https://github.com/devanshsingh068" class="social-link" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                </a>
+                <a href="https://www.linkedin.com/in/devansh-singh-372182389" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
